@@ -1,6 +1,7 @@
 import FeatureSkeleton from "@/components/common/featureSkeleton";
 import Banner from "@/components/home/banner";
 import Features from "@/components/home/features";
+import StudioCategories from "@/components/home/studioCategories";
 import { Suspense } from "react";
 
 const BannerLoading = () => {
@@ -15,6 +16,9 @@ export default function Home() {
       </Suspense>
       <Suspense fallback={<FeatureSkeleton />}>
         <Features />
+      </Suspense>
+      <Suspense fallback={<FeatureSkeleton />}>
+        <StudioCategories />
       </Suspense>
     </main>
   );

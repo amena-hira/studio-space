@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Heart, MapPin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -12,9 +11,9 @@ const FeatureCard = ({ studio }) => {
                 <Image
                     src={studio.image}
                     alt={studio.title}
-                    width={600}
+                    width={400}
                     height={400}
-                    className="h-56 w-full object-cover transition-transform duration-300 hover:scale-105"
+                    className="h-56 lg:h-36 w-full aspect-video object-cover transition-transform duration-300 hover:scale-105"
                 />
                 <Badge className="absolute top-3 left-3 rounded-full border-0 bg-primary px-3 py-1 text-xs font-bold text-white">
                     {studio.category}
