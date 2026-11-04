@@ -35,7 +35,7 @@ const Navbar = () => {
 
     // Change this to false to preview the Login and Register buttons.
     // Authentication will provide this value later.
-    const isAuthenticated = true;
+    const isAuthenticated = false;
 
     return (
         <header className="border-b border-border bg-background">
