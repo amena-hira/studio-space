@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 import {
     CalendarDays,
     ChevronDown,
@@ -24,14 +25,20 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar";
 
-const Navbar = () => {
+const NavbarContent = () => {
     const pathname = usePathname();
     const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/studios", label: "Explore Studios" },
-        { href: "#how-it-works", label: "How It Works" },
-        { href: "#about", label: "About Us" },
+        { href: "/", label: "Home", active: "/" },
+        { href: "/studios", label: "Explore Studios", active: "/studios" },
+        { href: "#how-it-works", label: "How It Works", active: null },
+        { href: "#about", label: "About Us", active: null },
     ];
+
+    const isActiveLink = (active) => {
+        if (!active) return false;
+        if (active === "/") return pathname === "/";
+        return pathname === active || pathname.startsWith(`${active}/`);
+    };
 
     // Change this to false to preview the Login and Register buttons.
     // Authentication will provide this value later.
@@ -58,13 +65,13 @@ const Navbar = () => {
 
                 <div className="hidden h-full items-center gap-8 text-sm font-semibold lg:flex">
                     {navLinks.map((link) => {
-                        const isActive = link.href.startsWith("/") && pathname === link.href;
+                        const isActive = isActiveLink(link.active);
                         const className = isActive
                             ? "flex h-full items-center border-b-2 border-primary text-primary"
                             : "flex h-full items-center border-b-2 border-transparent text-foreground hover:border-primary/50 hover:text-primary";
 
                         return link.href.startsWith("/") ? (
-                            <Link key={link.label} href={link.href} className={className}>
+                            <Link key={link.label} href={link.href} className={className} aria-current={isActive ? "page" : undefined}>
                                 {link.label}
                             </Link>
                         ) : (
@@ -156,7 +163,8 @@ const Navbar = () => {
                                     <Link
                                         key={link.label}
                                         href={link.href}
-                                        className={`block rounded-md px-3 py-2 text-sm font-semibold hover:bg-muted hover:text-primary ${pathname === link.href ? "bg-muted text-primary" : "text-foreground"}`}
+                                        aria-current={isActiveLink(link.active) ? "page" : undefined}
+                                        className={`block rounded-md px-3 py-2 text-sm font-semibold hover:bg-muted hover:text-primary ${isActiveLink(link.active) ? "bg-muted text-primary" : "text-foreground"}`}
                                     >
                                         {link.label}
                                     </Link>
@@ -191,5 +199,22 @@ const Navbar = () => {
         </header>
     );
 }
+
+const NavbarFallback = () => (
+    <header className="border-b border-border bg-background">
+        <nav className="mx-auto flex h-20 max-w-7xl items-center px-5 lg:px-8">
+            <Link href="/" className="flex items-center gap-2" aria-label="StudioSpace home">
+                <Image src="/images/aperture-logo.png" alt="" width={44} height={44} className="size-11 object-contain" />
+                <span className="text-lg font-bold tracking-tight text-foreground lg:text-2xl">Studio<span className="text-primary">Space</span></span>
+            </Link>
+        </nav>
+    </header>
+);
+
+const Navbar = () => (
+    <Suspense fallback={<NavbarFallback />}>
+        <NavbarContent />
+    </Suspense>
+);
 
 export default Navbar;
