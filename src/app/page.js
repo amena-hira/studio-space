@@ -2,6 +2,8 @@ import FeatureSkeleton from "@/components/common/featureSkeleton";
 import Banner from "@/components/home/banner";
 import Features from "@/components/home/features";
 import StudioCategories from "@/components/home/studioCategories";
+import HowBookingWorks from "@/components/home/how-booking-works";
+import GuaranteeSupport from "@/components/home/guarantee-support";
 import { Suspense } from "react";
 
 const BannerLoading = () => {
@@ -20,6 +22,8 @@ export default function Home() {
       <Suspense fallback={<FeatureSkeleton />}>
         <StudioCategories />
       </Suspense>
+      <HowBookingWorks />
+      <GuaranteeSupport />
     </main>
   );
 }
