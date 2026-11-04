@@ -7,7 +7,7 @@ import Image from "next/image";
 const FeatureCard = ({ studio, variant = "featured" }) => {
     const imageHeight = variant === "studio" ? "h-56" : "h-56 lg:h-36";
     return (
-        <Card className="gap-0 overflow-hidden rounded-2xl border-border bg-card p-0 text-card-foreground shadow-lg shadow-black/10">
+        <Card className="group relative gap-0 overflow-hidden rounded-2xl border-border bg-card p-0 text-card-foreground shadow-lg shadow-black/10">
             <div className="relative overflow-hidden bg-muted">
                 <Image
                     src={studio.image}
@@ -21,7 +21,7 @@ const FeatureCard = ({ studio, variant = "featured" }) => {
                 </Badge>
                 <button
                     type="button"
-                    className="absolute top-3 right-3 grid size-7 place-items-center rounded-full bg-black/60 text-white"
+                    className="absolute top-3 right-3 z-20 grid size-7 place-items-center rounded-full bg-black/60 text-white"
                     aria-label={`Save ${studio.title}`}
                 >
                     <Heart className="size-4" />
@@ -33,7 +33,14 @@ const FeatureCard = ({ studio, variant = "featured" }) => {
             </div>
 
             <div className="px-4 py-4">
-                <h3 className="truncate text-base font-bold">{studio.title}</h3>
+                <h3 className="truncate text-base font-bold">
+                    <Link
+                        href={`/studios/${studio._id}`}
+                        className="after:absolute after:inset-0 after:z-10"
+                    >
+                        {studio.title}
+                    </Link>
+                </h3>
                 <p className="mt-2 flex items-center gap-1.5 truncate text-sm text-muted-foreground">
                     <MapPin className="size-4 shrink-0 text-primary" />
                     {studio.location}
@@ -42,13 +49,10 @@ const FeatureCard = ({ studio, variant = "featured" }) => {
                     ${studio.hourlyRate}
                     <span className="ml-1 text-sm font-medium text-muted-foreground">/ hr</span>
                 </p>
-                <Link
-                    href={`/studios/${studio._id}`}
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:bg-primary hover:text-white"
-                >
+                <span className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-primary bg-transparent px-4 py-2.5 text-sm font-semibold text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white">
                     View Details
-                    <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                    <ArrowUpRight className="size-4" />
+                </span>
             </div>
         </Card>
     );

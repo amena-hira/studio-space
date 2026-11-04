@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Suspense } from "react";
 import {
     CalendarDays,
     ChevronDown,
@@ -25,7 +24,7 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar";
 
-const NavbarContent = () => {
+const Navbar = () => {
     const pathname = usePathname();
     const navLinks = [
         { href: "/", label: "Home", active: "/" },
@@ -199,22 +198,5 @@ const NavbarContent = () => {
         </header>
     );
 }
-
-const NavbarFallback = () => (
-    <header className="border-b border-border bg-background">
-        <nav className="mx-auto flex h-20 max-w-7xl items-center px-5 lg:px-8">
-            <Link href="/" className="flex items-center gap-2" aria-label="StudioSpace home">
-                <Image src="/images/aperture-logo.png" alt="" width={44} height={44} className="size-11 object-contain" />
-                <span className="text-lg font-bold tracking-tight text-foreground lg:text-2xl">Studio<span className="text-primary">Space</span></span>
-            </Link>
-        </nav>
-    </header>
-);
-
-const Navbar = () => (
-    <Suspense fallback={<NavbarFallback />}>
-        <NavbarContent />
-    </Suspense>
-);
 
 export default Navbar;
