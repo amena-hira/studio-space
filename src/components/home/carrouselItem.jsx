@@ -1,14 +1,9 @@
-import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { Plus, Search } from "lucide-react";
-import {
-    CarouselItem,
-} from "@/components/ui/carousel";
 
 const CarrouselItemContent = ({ slide, index }) => {
     return (
-        <CarouselItem key={slide.image} className="pl-0">
             <div className="relative h-[440px] overflow-hidden sm:h-[470px] sm:rounded-2xl lg:h-[500px]">
                 <Image
                     src={slide.image}
@@ -56,7 +51,6 @@ const CarrouselItemContent = ({ slide, index }) => {
                     </div>
                 </div>
             </div>
-        </CarouselItem>
     );
 };
 

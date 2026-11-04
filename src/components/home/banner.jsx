@@ -1,13 +1,9 @@
 "use client";
 
-import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useState } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
 import CarrouselItemContent from "./carrouselItem";
 
 const slides = [
@@ -34,82 +30,68 @@ const slides = [
     alt: "Music production studio with mixing console",
     eyebrow: "PLAY • MIX • MASTER",
     titleStart: "Make Music in a",
-    titleAccent: "Pro Studio",
+    titleAccent: "Studio Space",
     description:
       "Discover inspiring recording spaces with the tools you need to bring your sound to life.",
   },
 ];
 
 const Banner = () => {
-    const [api, setApi] = useState(null);
-    const [current, setCurrent] = useState(0);
-    const [count, setCount] = useState(0);
+  const [swiper, setSwiper] = useState(null);
+  const [activeSlide, setActiveSlide] = useState(0);
 
-    useEffect(() => {
-        if (!api) return;
+  return (
+    <section className="bg-background py-4 sm:px-8 sm:py-5 lg:px-10">
+      <div className="relative mx-auto max-w-[1600px]">
+        <Swiper
+          modules={[Autoplay]}
+          loop
+          slidesPerView={1}
+          autoplay={{ delay: 30000, disableOnInteraction: false }}
+          onSwiper={setSwiper}
+          onSlideChange={(currentSwiper) => setActiveSlide(currentSwiper.realIndex)}
+        >
+          {slides.map((slide, index) => (
+            <SwiperSlide key={slide.image}>
+              <CarrouselItemContent slide={slide} index={index} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
-        const updateSlide = () => {
-            setCurrent(api.selectedScrollSnap());
-            setCount(api.scrollSnapList().length);
-        };
+        <button
+          type="button"
+          onClick={() => swiper?.slidePrev()}
+          className="absolute top-1/2 left-6 z-10 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white/80 bg-black/25 text-white hover:bg-black/50 sm:flex"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="size-7" />
+        </button>
+        <button
+          type="button"
+          onClick={() => swiper?.slideNext()}
+          className="absolute top-1/2 right-6 z-10 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white/80 bg-black/25 text-white hover:bg-black/50 sm:flex"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="size-7" />
+        </button>
 
-        updateSlide();
-
-        api.on("select", updateSlide);
-        api.on("reInit", updateSlide);
-
-        return () => {
-            api.off("select", updateSlide);
-            api.off("reInit", updateSlide);
-        };
-    }, [api]);
-
-    return (
-        <section className="bg-background py-4 sm:px-8 sm:py-5 lg:px-10">
-            <Carousel
-                setApi={setApi}
-                opts={{ loop: true }}
-                plugins={[
-                    Autoplay({
-                        delay: 10000,
-                        stopOnInteraction: false,
-                    }),
-                ]}
-                className="mx-auto max-w-[1600px]"
-            >
-                <CarouselContent className="ml-0">
-                    {slides.map((slide, index) => (
-                        <CarrouselItemContent key={slide.image} slide={slide} index={index} />
-                    ))}
-                </CarouselContent>
-
-                {/* Previous Button */}
-                <CarouselPrevious className="left-6 hidden size-12 border-2 border-white/80 bg-black/25 text-white hover:bg-black/50 hover:text-white sm:flex" />
-
-                {/* Next Button */}
-                <CarouselNext className="right-6 hidden size-12 border-2 border-white/80 bg-black/25 text-white hover:bg-black/50 hover:text-white sm:flex" />
-
-                {/* Carousel Dots */}
-                <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
-                    {Array.from({ length: count }).map((_, index) => (
-                        <button
-                            key={index}
-                            type="button"
-                            onClick={() => api?.scrollTo(index)}
-                            aria-label={`Go to slide ${index + 1}`}
-                            aria-current={
-                                current === index ? "true" : undefined
-                            }
-                            className={`h-2 rounded-full transition-all duration-300 ${current === index
-                                    ? "w-7 bg-primary"
-                                    : "w-2 bg-white/90 hover:bg-white"
-                                }`}
-                        />
-                    ))}
-                </div>
-            </Carousel>
-        </section>
-    );
+        <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+          {slides.map((slide, index) => (
+            <button
+              key={slide.image}
+              type="button"
+              onClick={() => swiper?.slideToLoop(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                index === activeSlide ? "w-7 bg-primary" : "w-2 bg-white/90 hover:bg-white"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={index === activeSlide ? "true" : undefined}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Banner;

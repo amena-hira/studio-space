@@ -1,5 +1,6 @@
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import "swiper/css";
 import ThemeProvider from "@/components/theme-provider";
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
