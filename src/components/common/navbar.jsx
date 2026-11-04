@@ -40,7 +40,7 @@ const Navbar = () => {
     return (
         <header className="border-b border-border bg-background">
             <nav
-                className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-5 lg:px-8"
+                className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8"
                 aria-label="Main navigation"
             >
                 <Link href="/" className="flex items-center gap-2" aria-label="StudioSpace home">

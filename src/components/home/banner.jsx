@@ -41,8 +41,8 @@ const Banner = () => {
   const [activeSlide, setActiveSlide] = useState(0);
 
   return (
-    <section className="bg-background py-4 sm:px-8 sm:py-5 lg:px-10">
-      <div className="relative mx-auto max-w-[1600px]">
+    <section className="bg-background sm:px-8 sm:py-5 lg:px-10">
+      <div className="relative mx-auto max-w-7xl">
         <Swiper
           modules={[Autoplay]}
           loop
