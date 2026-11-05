@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     CalendarDays,
     ChevronDown,
@@ -23,9 +23,22 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
+import { authClient } from "@/lib/auth-client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Navbar = () => {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const { data: session, isPending } = authClient.useSession()
+    const user = session?.user;
+
+    const handleSignOut = async () => {
+        await authClient.signOut()
+        router.push("/login")
+        router.refresh()
+    }
+
     const navLinks = [
         { href: "/", label: "Home", active: "/" },
         { href: "/studios", label: "Explore Studios", active: "/studios" },
@@ -38,10 +51,6 @@ const Navbar = () => {
         if (active === "/") return pathname === "/";
         return pathname === active || pathname.startsWith(`${active}/`);
     };
-
-    // Change this to false to preview the Login and Register buttons.
-    // Authentication will provide this value later.
-    const isAuthenticated = false;
 
     return (
         <header className="border-b border-border bg-background">
@@ -84,29 +93,30 @@ const Navbar = () => {
                 <div className="flex items-center gap-3">
                     <ThemeToggle />
 
-                    {isAuthenticated ? (
+                    {isPending ? (
+                        <div className="hidden items-center gap-3 sm:flex" aria-label="Loading user">
+                            <Skeleton className="size-9 rounded-full" />
+                            <Skeleton className="h-9 w-24" />
+                        </div>
+                    ) : user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger className="flex items-center gap-3 rounded-xl bg-muted px-3 py-2 text-sm font-semibold text-foreground">
                                 
                                 <Avatar>
-                                    <AvatarImage
-                                        src="/images/profile.jpg"
-                                        alt="User Avatar"
-                                        className="size-8 rounded-full"
-                                    />
+                                    {user.image && <AvatarImage src={user.image} alt={user.name || "User avatar"} className="size-8 rounded-full" />}
                                     <AvatarFallback className="size-8 rounded-full bg-muted text-xs font-bold text-foreground">
-                                        HA
+                                        {getInitials(user.name)}
                                     </AvatarFallback>
                                 </Avatar>
-                                <span className="hidden xl:block">Harry</span>
+                                <span className="hidden xl:block">{user.name}</span>
                                 <ChevronDown className="size-4 hidden xl:block text-muted-foreground" />
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent align="end" sideOffset={12} className="w-70 rounded-2xl border border-border bg-card p-5 text-foreground shadow-2xl">
                                 <div className="border-b border-border pb-4">
                                     <p className="text-sm text-muted-foreground">Signed in as</p>
-                                    <p className="mt-1 font-bold">Harry Ahmed</p>
-                                    <p className="text-sm text-muted-foreground">harry@studiospace.io</p>
+                                    <p className="mt-1 font-bold">{user.name}</p>
+                                    <p className="text-sm text-muted-foreground">{user.email}</p>
                                 </div>
 
                                 <div className="space-y-1 border-b border-border py-1">
@@ -122,16 +132,16 @@ const Navbar = () => {
                                         <CalendarDays className="size-4" />
                                         My Bookings
                                     </Link>
-                                    <Link href="/wishlist" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
+                                    <Link href="#" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
                                         <Heart className="size-4" />
                                         Saved Wishlist
                                     </Link>
                                 </div>
 
-                                <Link href="/logout" className="mt-2 flex items-center gap-4 rounded-lg px-3 py-2 font-medium text-rose-500 hover:bg-muted">
+                                <button type="button" onClick={handleSignOut} className="mt-2 flex w-full items-center gap-4 rounded-lg px-3 py-2 font-medium text-rose-500 hover:bg-muted">
                                     <LogOut className="size-4" />
                                     Logout
-                                </Link>
+                                </button>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
@@ -178,7 +188,7 @@ const Navbar = () => {
                                 )
                             ))}
 
-                            {!isAuthenticated && (
+                            {!isPending && !user && (
                                 <>
                                     <div className="my-2 border-t border-border" />
                                     <div className="grid grid-cols-2 gap-2 px-1 pt-1">
@@ -198,5 +208,12 @@ const Navbar = () => {
         </header>
     );
 }
+
+const getInitials = (name = "User") => name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
 export default Navbar;

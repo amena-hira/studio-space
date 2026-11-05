@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { CalendarDays, Clock3, Info, Layers3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { toast } from "@/components/ui/toast";
+import { authClient } from "@/lib/auth-client";
 
 const times = Array.from({ length: 15 }, (_, index) => index + 8);
 
@@ -27,6 +29,10 @@ const formatTime = (hour) => {
 };
 
 const BookingModal = ({ studio, apiUrl }) => {
+
+  const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [bookingDate, setBookingDate] = useState("");
   const [startTime, setStartTime] = useState(10);
@@ -35,6 +41,27 @@ const BookingModal = ({ studio, apiUrl }) => {
   const duration = Math.max(endTime - startTime, 0);
   const bookingCost = studio.hourlyRate * duration;
   const total = bookingCost + studio.securityDeposit;
+
+  const handleOpenChange = (nextOpen) => {
+    if (!nextOpen) {
+      setOpen(false);
+      return;
+    }
+
+    if (isPending) return;
+
+    if (!session?.user) {
+      toast.add({
+        title: "Login required",
+        description: "Please log in before booking a workspace.",
+        type: "error",
+      });
+      router.push(`/login?callbackURL=/studios/${studio._id}`);
+      return;
+    }
+
+    setOpen(true);
+  };
 
   const confirmBooking = async (event) => {
     event.preventDefault();
@@ -54,8 +81,8 @@ const BookingModal = ({ studio, apiUrl }) => {
       studioImage: studio?.image,
       studioCategory: studio?.category,
       studioLocation: studio?.location,
-      username: "Alex Rivera",
-      userEmail: "alex.rivera@example.com",
+      username: session.user.name,
+      userEmail: session.user.email,
       bookingDate,
       startTime,
       endTime,
@@ -94,9 +121,9 @@ const BookingModal = ({ studio, apiUrl }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="h-11 w-full text-base font-bold" />}>
-        Book Workspace Now
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger render={<Button className="h-11 w-full text-base font-bold" disabled={isPending} />}>
+        {isPending ? "Checking account..." : "Book Workspace Now"}
       </DialogTrigger>
 
       <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto p-5 sm:max-w-2xl sm:p-7">
