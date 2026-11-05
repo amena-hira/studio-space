@@ -42,7 +42,7 @@ const CarrouselItemContent = ({ slide, index }) => {
                         </Link>
 
                         <Link
-                            href="/studios/new"
+                            href="/add-studio"
                             className="flex items-center justify-center gap-3 rounded-xl border border-white/80 px-6 py-3.5 font-semibold text-white hover:bg-white/10 sm:py-4"
                         >
                             <Plus className="size-4" />

@@ -121,7 +121,7 @@ const BookingCard = ({ booking, onCancel }) => (
   <Card className="relative gap-0 rounded-2xl border-border bg-card p-4 shadow-sm transition-colors hover:border-primary/50 md:flex-row md:items-center md:gap-5">
     {booking.studioId && (
       <Link
-        href={`/studios/edit/${booking.studioId}`}
+        href={`/studios/${booking.studioId}`}
         aria-label={`Open ${booking.studioTitle}`}
         className="absolute inset-0 rounded-2xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       />
