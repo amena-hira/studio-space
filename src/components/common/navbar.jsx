@@ -41,7 +41,7 @@ const Navbar = () => {
 
     // Change this to false to preview the Login and Register buttons.
     // Authentication will provide this value later.
-    const isAuthenticated = false;
+    const isAuthenticated = true;
 
     return (
         <header className="border-b border-border bg-background">
@@ -110,15 +110,15 @@ const Navbar = () => {
                                 </div>
 
                                 <div className="space-y-1 border-b border-border py-1">
-                                    <Link href="/studios/new" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
+                                    <Link href="/add-studio" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
                                         <PlusSquare className="size-4" />
                                         Add New Studio
                                     </Link>
-                                    <Link href="/my-studios" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
+                                    <Link href="/my-listings" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
                                         <Layers className="size-4" />
                                         My Studio Listings
                                     </Link>
-                                    <Link href="/bookings" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
+                                    <Link href="/my-bookings" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
                                         <CalendarDays className="size-4" />
                                         My Bookings
                                     </Link>

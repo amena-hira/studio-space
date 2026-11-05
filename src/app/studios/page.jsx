@@ -10,6 +10,7 @@ const StudiosPage = async () => {
         try {
             const response = await fetch(`${apiUrl}/studios`);
             if (response.ok) studios = await response.json();
+            console.log(studios.length)
         } catch {
             studios = [];
         }
@@ -24,7 +25,7 @@ const StudiosPage = async () => {
                 <div className="mx-auto grid max-w-7xl">
 
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                        {studios.slice(0, 12).map((studio) => <FeatureCard key={studio._id} studio={studio} variant="studio" />)}
+                        {studios.map((studio) => <FeatureCard key={studio._id} studio={studio} variant="studio" />)}
                     </div>
                 </div>
             </div>
