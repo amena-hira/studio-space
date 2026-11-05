@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# StudioSpace
 
-## Getting Started
+StudioSpace is a peer-to-peer marketplace where creators can discover and book professional photography, film, podcast, music, and art studio spaces. Studio owners can also publish and manage their own listings.
 
-First, run the development server:
+## Live Site
+
+- **Website:** [https://studio-space-sand.vercel.app](https://studio-space-sand.vercel.app)
+
+## Examiner Test Credentials
+
+```text
+Email: alex.rivera@example.com
+Password: Aa1234
+```
+## Website Features
+
+- Studio Discovery & Filtering: Explore a wide range of creative studios, including photography studios, podcast rooms, music suites, film stages, and art workshops, with category-based filtering.
+
+- Secure User Authentication: Users can register, log in, and authenticate with Google, with protected routes and JWT-based security.
+
+- Studio Management (CRUD): Studio owners can add new studios, view their listings, update studio information, and delete studios through a user-friendly dashboard.
+
+- Studio Booking System: Users can book studios for specific dates and time slots, track booking statuses, and cancel pending reservations.
+
+- Responsive Design & Theme Customization: Enjoy a modern, mobile-friendly interface with light and dark mode support for a seamless user experience across devices.
+
+## Tech Stack
+
+### Client
+
+- Next.js 16 and React 19
+- Tailwind CSS and shadcn/ui
+- Better Auth
+- Swiper
+- Sonner
+
+### Server
+
+- Node.js and Express
+- MongoDB
+- JOSE for JWT verification
+- CORS and dotenv
+
+## Run Locally
+
+### 1. Clone the repositories
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/amena-hira/studio-space.git
+git clone https://github.com/amena-hira/studio-space-server.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+cd studio-space
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+In another terminal:
 
-## Learn More
+```bash
+cd studio-space-server
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Configure environment variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env` file in `studio-space`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+MONGODB_URI=your_mongodb_connection_string
+BETTER_AUTH_SECRET=your_auth_secret
+BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_GOOGLE_CLIENT_ID=your_google_client_id
+BETTER_AUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
+BACKEND_URL=http://localhost:8000
+```
 
-## Deploy on Vercel
+Create a `.env` file in `studio-space-server`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```env
+DB_USER=your_mongodb_username
+DB_PASSWORD=your_mongodb_password
+BASE_URL=http://localhost:3000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 4. Start the server
+
+```bash
+cd studio-space-server
+npm run dev
+```
+
+### 5. Start the client
+
+```bash
+cd studio-space
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Source Code
+
+- **Client:** [https://github.com/amena-hira/studio-space](https://github.com/amena-hira/studio-space)
+- **Server:** [https://github.com/amena-hira/studio-space-server](https://github.com/amena-hira/studio-space-server)
