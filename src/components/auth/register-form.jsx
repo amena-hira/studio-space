@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Check, Eye, EyeOff, LinkIcon, LockKeyhole, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import GoogleLogo from "@/components/auth/google-logo";
-import { toast } from "../ui/toast";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const requirements = [
     { label: "Must contain an uppercase letter (A–Z)", met: /[A-Z]/.test(password) },
@@ -23,34 +25,34 @@ const RegisterForm = () => {
 
   const handleRegister = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target)
+    setIsSubmitting(true);
+    const formData = new FormData(event.currentTarget)
     const user = Object.fromEntries(formData.entries())
-    console.log(user);
+    const image = user.image?.trim() || undefined;
     const { data, error } = await authClient.signUp.email({
       name: user.name,
       email: user.email,
       password,
-      photo: user.photo,
-      callbackURL: "/"
-    })
+      image,
+    });
 
     if (data) {
-      console.log(data);
-      toast.add({
-        title: "Registration successful!",
+      if (image && data.user?.image !== image) {
+        await authClient.updateUser({ image });
+      }
+      toast.success("Registration successful!", {
         description: "Your information is saved!",
-        type: "success",
       });
-      redirect("/");
+      router.push("/");
+      router.refresh();
+      return;
     }
     if (error) {
-      console.log(error);
-      toast.add({
-        title: "Unable to register you",
-        description: submitError.message,
-        type: "error",
+      toast.error("Unable to register", {
+        description: error.message || "Registration failed. Please try again.",
       });
     }
+    setIsSubmitting(false);
   }
   const handleGoogle = async () => {
     console.log("register clicked google");
@@ -74,7 +76,7 @@ const RegisterForm = () => {
         </FormField>
 
         <FormField label="Photo URL">
-          <InputWithIcon icon={LinkIcon} name="photo" type="url" placeholder="Enter your photo URL" />
+          <InputWithIcon icon={LinkIcon} name="image" type="url" placeholder="Enter your photo URL" />
         </FormField>
 
         <FormField label="Password">
@@ -107,7 +109,9 @@ const RegisterForm = () => {
           ))}
         </ul>
 
-        <Button type="submit" className="mt-2 h-12 w-full text-base font-bold">Register</Button>
+        <Button type="submit" className="mt-2 h-12 w-full text-base font-bold" disabled={isSubmitting}>
+          {isSubmitting ? "Creating account..." : "Register"}
+        </Button>
 
         <div className="flex items-center gap-4 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
           Or register with

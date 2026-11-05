@@ -1,5 +1,10 @@
 import { createAuthClient } from "better-auth/react"
+import { jwtClient } from "better-auth/client/plugins"
+export const authClient = createAuthClient({
+    /** The base URL of the server (optional if you're using the same domain) */
+    baseURL: process.env.BETTER_AUTH_URL,
+    plugins: [
+        jwtClient()
+    ],
 
-// Auth routes are served from this Next.js app, so Better Auth can use the
-// current origin. Server-only environment variables are unavailable here.
-export const authClient = createAuthClient()
+})

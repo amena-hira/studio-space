@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { toast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const times = Array.from({ length: 15 }, (_, index) => index + 8);
 
@@ -51,10 +52,8 @@ const BookingModal = ({ studio, apiUrl }) => {
     if (isPending) return;
 
     if (!session?.user) {
-      toast.add({
-        title: "Login required",
+      toast.error("Login required", {
         description: "Please log in before booking a workspace.",
-        type: "error",
       });
       router.push(`/login?callbackURL=/studios/${studio._id}`);
       return;
@@ -67,10 +66,8 @@ const BookingModal = ({ studio, apiUrl }) => {
     event.preventDefault();
 
     if (!bookingDate || duration === 0) {
-      toast.add({
-        title: "Choose valid booking details",
+      toast.error("Choose valid booking details", {
         description: "Select a date and an end time after the start time.",
-        type: "error",
       });
       return;
     }
@@ -94,9 +91,13 @@ const BookingModal = ({ studio, apiUrl }) => {
     }
 
     try {
+      const token = await getTokenFromClient();
       const res = await fetch(`${apiUrl}/bookings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(payload),
       })
       if (!res.ok) {
@@ -104,17 +105,14 @@ const BookingModal = ({ studio, apiUrl }) => {
         throw new Error(result?.message || "Unable to save the booking.");
       }
 
-      toast.add({
-        title: "Booking request created",
+      toast.success("Booking request created", {
         description: "Your booking was created with a Pending status.",
-        type: "success",
       });
       setOpen(false);
     } catch (error) {
-      toast.add({
-        title: "Unable to save booking",
+      setOpen(false);
+      toast.error("Unable to save booking", {
         description: error.message,
-        type: "error",
       })
     }
 

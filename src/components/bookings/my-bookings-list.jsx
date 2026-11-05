@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { CalendarDays, CalendarX, CheckCircle2, Clock3, MapPin, XCircle } from "lucide-react";
 import EmptyState from "@/components/common/empty-state";
 import {
@@ -17,7 +18,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { toast } from "@/components/ui/toast";
+import { toast } from "sonner";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const filters = ["All", "Pending", "Confirmed", "Completed", "Cancelled"];
 
@@ -41,10 +43,14 @@ const MyBookingsList = ({ initialBookings, apiUrl }) => {
     : bookings.filter((booking) => booking.status === filter).length;
 
   const cancelBooking = async (booking) => {
+    const token = await getTokenFromClient();
     try {
       const response = await fetch(`${apiUrl}/bookings/${booking._id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+         },
         body: JSON.stringify({ status: "Cancelled" }),
       });
 
@@ -53,9 +59,9 @@ const MyBookingsList = ({ initialBookings, apiUrl }) => {
       setBookings((current) => current.map((item) =>
         item._id === booking._id ? { ...item, status: "Cancelled" } : item
       ));
-      toast.add({ title: "Booking cancelled", description: `${booking.studioTitle} was cancelled.`, type: "success" });
+      toast.success("Booking cancelled", { description: `${booking.studioTitle} was cancelled.` });
     } catch (error) {
-      toast.add({ title: "Cancellation failed", description: error.message, type: "error" });
+      toast.error("Cancellation failed", { description: error.message });
     }
   };
 
@@ -112,7 +118,14 @@ const MyBookingsList = ({ initialBookings, apiUrl }) => {
 };
 
 const BookingCard = ({ booking, onCancel }) => (
-  <Card className="gap-0 rounded-2xl border-border bg-card p-4 shadow-sm md:flex-row md:items-center md:gap-5">
+  <Card className="relative gap-0 rounded-2xl border-border bg-card p-4 shadow-sm transition-colors hover:border-primary/50 md:flex-row md:items-center md:gap-5">
+    {booking.studioId && (
+      <Link
+        href={`/studios/edit/${booking.studioId}`}
+        aria-label={`Open ${booking.studioTitle}`}
+        className="absolute inset-0 rounded-2xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      />
+    )}
     <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl bg-muted md:w-52">
       {booking.studioImage && <Image src={booking.studioImage} alt={booking.studioTitle} fill sizes="(max-width: 768px) 100vw, 208px" className="object-cover" />}
     </div>
@@ -129,7 +142,7 @@ const BookingCard = ({ booking, onCancel }) => (
       </div>
     </div>
 
-    <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4 md:border-0 md:pt-0">
+    <div className="relative z-10 flex flex-wrap items-center gap-3 border-t border-border pt-4 md:border-0 md:pt-0">
       <StatusBadge status={booking.status} />
       {booking.status === "Pending" && <CancelBookingButton booking={booking} onCancel={onCancel} />}
     </div>

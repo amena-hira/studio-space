@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "../ui/toast";
+import { toast } from "sonner";
 
 const LoginForm = ({ callbackURL = "/" }) => {
   const router = useRouter();
@@ -27,20 +27,16 @@ const LoginForm = ({ callbackURL = "/" }) => {
     })
 
     if (data) {
-      toast.add({
-        title: "Login successful!",
+      toast.success("Login successful!", {
         description: "You successfully logged in!",
-        type: "success",
       });
       router.push(callbackURL);
       router.refresh();
       return;
     }
     if (error) {
-      toast.add({
-        title: "Unable to login you",
+      toast.error("Unable to login", {
         description: error.message || "Please check your email and password.",
-        type: "error",
       });
     }
     setIsSubmitting(false);

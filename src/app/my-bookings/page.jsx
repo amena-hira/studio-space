@@ -1,17 +1,29 @@
 import Link from "next/link";
 import { CalendarDays, Home } from "lucide-react";
 import MyBookingsList from "@/components/bookings/my-bookings-list";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const apiUrl = process.env.BACKEND_URL;
-const email = "alex.rivera@example.com";
 
 export const dynamic = "force-dynamic";
 
 const MyBookingsPage = async () => {
   let bookings = [];
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+  const user = session?.user
 
   try {
-    const response = await fetch(`${apiUrl}/bookings/user/${email}`, { cache: "no-store" });
+    const token = await getTokenFromServer();
+    const response = await fetch(`${apiUrl}/bookings/user/${user?.email}`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (response.ok) {
       const result = await response.json();
       bookings = Array.isArray(result) ? result : [];

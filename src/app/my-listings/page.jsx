@@ -1,18 +1,28 @@
 import Link from "next/link";
 import { Home, Layers, Plus } from "lucide-react";
 import MyListingsList from "@/components/studios/my-listings-list";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const apiUrl = process.env.BACKEND_URL;
-const email = "alex.rivera@example.com";
 
 export const dynamic = "force-dynamic";
 
 const MyListingsPage = async () => {
     let listings = [];
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    const user = session?.user
 
     try {
-        const response = await fetch(`${apiUrl}/studios/user/${email}`, {
+        const token = await getTokenFromServer();
+        const response = await fetch(`${apiUrl}/studios/user/${user?.email}`, {
             cache: "no-store",
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
         });
 
         if (response.ok) {

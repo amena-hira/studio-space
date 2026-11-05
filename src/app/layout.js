@@ -4,7 +4,7 @@ import "swiper/css";
 import ThemeProvider from "@/components/theme-provider";
 import Navbar from "@/components/common/navbar";
 import Footer from "@/components/common/footer";
-import { Toaster } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/sonner";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -30,11 +30,11 @@ export default function RootLayout({ children }) {
           enableSystem={false}
           disableTransitionOnChange
         >
-          <Toaster>
-            <Navbar />
-            {children}
-            <Footer />
-          </Toaster>
+          <Toaster />
+          <Navbar />
+          {children}
+          <Footer />
+
         </ThemeProvider>
       </body>
     </html>

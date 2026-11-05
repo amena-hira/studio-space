@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/toast";
+import { toast } from "sonner";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const categories = [
   "Photo Studios",
@@ -80,10 +81,14 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
     };
 
     try {
+      const token = await getTokenFromClient()
       console.log(`endpoint: ${endpoint}, method: ${method}, payload:${payload}`);
       const response = await fetch(endpoint, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(payload),
       });
 
@@ -94,12 +99,10 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
       }
 
       const savedStudio = await response.json();
-      toast.add({
-        title: isEditing ? "Studio updated" : "Studio added",
+      toast.success(isEditing ? "Studio updated" : "Studio added", {
         description: isEditing
           ? "Your studio changes were saved successfully."
           : "Your studio was added successfully.",
-        type: "success",
       });
       setIsSubmitting(false);
       console.log(`save studio id: ${savedStudio?._id} id: ${studio?._id}`)
@@ -107,10 +110,8 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
       router.refresh();
     } catch (submitError) {
       console.log(submitError);
-      toast.add({
-        title: "Unable to save studio",
+      toast.error("Unable to save studio", {
         description: submitError.message,
-        type: "error",
       });
       setIsSubmitting(false);
     }

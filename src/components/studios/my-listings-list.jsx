@@ -17,25 +17,30 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { toast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import EmptyState from "@/components/common/empty-state";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const MyListingsList = ({ initialListings, apiUrl }) => {
   const [listings, setListings] = useState(initialListings);
 
   const deleteStudio = async (studio) => {
     try {
-      const response = await fetch(`${apiUrl}/studios/${studio._id}`, { method: "DELETE" });
+      const token = await getTokenFromClient()
+      const response = await fetch(`${apiUrl}/studios/${studio._id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (!response.ok) throw new Error("The studio could not be deleted.");
 
       setListings((current) => current.filter((item) => item._id !== studio._id));
-      toast.add({
-        title: "Studio deleted",
+      toast.success("Studio deleted", {
         description: `${studio.title} was removed from your listings.`,
-        type: "success",
       });
     } catch (error) {
-      toast.add({ title: "Delete failed", description: error.message, type: "error" });
+      toast.error("Delete failed", { description: error.message });
     }
   };
 
