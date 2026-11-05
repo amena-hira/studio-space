@@ -7,9 +7,45 @@ import GoogleLogo from "@/components/auth/google-logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
+import { toast } from "../ui/toast";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target)
+    const user = Object.fromEntries(formData.entries())
+    console.log(user);
+    const { data, error } = await authClient.signIn.email({
+      ...user,
+    })
+
+    if (data) {
+      console.log(data);
+      toast.add({
+        title: "Login successful!",
+        description: "You successfully logged in!",
+        type: "success",
+      });
+      redirect("/");
+    }
+    if (error) {
+      console.log(error);
+      toast.add({
+        title: "Unable to login you",
+        description: submitError.message,
+        type: "error",
+      });
+    }
+  }
+
+  const handleGoogle = async () => {
+    console.log("google click");
+    const data = await authClient.signIn.social({ provider: 'google' });
+  }
 
   return (
     <Card className="w-full max-w-xl gap-0 rounded-2xl border border-border bg-card/95 p-6 shadow-2xl backdrop-blur-md sm:p-10">
@@ -18,7 +54,7 @@ const LoginForm = () => {
         <p className="mt-2 text-base text-muted-foreground">Log in to your StudioSpace account.</p>
       </div>
 
-      <form className="mt-9 grid gap-6" onSubmit={(event) => event.preventDefault()}>
+      <form className="mt-9 grid gap-6" onSubmit={handleLogin}>
         <FormField label="Email">
           <div className="relative">
             <Mail className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
@@ -44,7 +80,7 @@ const LoginForm = () => {
           Or login with
         </div>
 
-        <Button type="button" variant="outline" className="h-12 w-full bg-background text-base font-semibold">
+        <Button onClick={handleGoogle} type="button" variant="outline" className="h-12 w-full bg-background text-base font-semibold">
           <GoogleLogo /> Continue with Google
         </Button>
 

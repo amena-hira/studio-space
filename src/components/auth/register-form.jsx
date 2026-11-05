@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import GoogleLogo from "@/components/auth/google-logo";
+import { toast } from "../ui/toast";
+import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 const RegisterForm = () => {
   const [password, setPassword] = useState("");
@@ -18,6 +21,42 @@ const RegisterForm = () => {
     { label: "Must be at least 6 characters long", met: password.length >= 6 },
   ];
 
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target)
+    const user = Object.fromEntries(formData.entries())
+    console.log(user);
+    const { data, error } = await authClient.signUp.email({
+      name: user.name,
+      email: user.email,
+      password,
+      photo: user.photo,
+      callbackURL: "/"
+    })
+
+    if (data) {
+      console.log(data);
+      toast.add({
+        title: "Registration successful!",
+        description: "Your information is saved!",
+        type: "success",
+      });
+      redirect("/");
+    }
+    if (error) {
+      console.log(error);
+      toast.add({
+        title: "Unable to register you",
+        description: submitError.message,
+        type: "error",
+      });
+    }
+  }
+  const handleGoogle = async () => {
+    console.log("register clicked google");
+    const data = await authClient.signIn.social({ provider: 'google' });
+  }
+
   return (
     <Card className="w-full max-w-xl gap-0 rounded-2xl border border-border bg-card/95 p-6 shadow-2xl backdrop-blur-md sm:p-10">
       <div className="text-center">
@@ -25,7 +64,7 @@ const RegisterForm = () => {
         <p className="mt-2 text-base text-muted-foreground">Join StudioSpace and book or host creative spaces.</p>
       </div>
 
-      <form className="mt-8 grid gap-5" onSubmit={(event) => event.preventDefault()}>
+      <form className="mt-8 grid gap-5" onSubmit={handleRegister}>
         <FormField label="Name">
           <InputWithIcon icon={User} name="name" placeholder="Enter your name" autoComplete="name" required />
         </FormField>
@@ -74,7 +113,7 @@ const RegisterForm = () => {
           Or register with
         </div>
 
-        <Button type="button" variant="outline" className="h-12 w-full bg-background text-base font-semibold">
+        <Button onClick={handleGoogle} type="button" variant="outline" className="h-12 w-full bg-background text-base font-semibold">
           <GoogleLogo /> Continue with Google
         </Button>
 
