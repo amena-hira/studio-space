@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+    BookDashed,
     CalendarDays,
     ChevronDown,
     Heart,
@@ -135,6 +136,10 @@ const Navbar = () => {
                                     <Link href="#" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
                                         <Heart className="size-4" />
                                         Saved Wishlist
+                                    </Link>
+                                    <Link href="#" className="flex items-center gap-4 rounded-lg px-3 py-2.5 font-medium hover:bg-muted">
+                                        <BookDashed className="size-4" />
+                                        Dashboard
                                     </Link>
                                 </div>
 

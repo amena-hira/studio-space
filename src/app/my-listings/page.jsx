@@ -27,8 +27,6 @@ const MyListingsPage = async () => {
 
         if (response.ok) {
             listings = await response.json();
-
-            console.log(listings);
         }
 
     } catch {

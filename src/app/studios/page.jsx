@@ -8,7 +8,9 @@ const apiUrl = process.env.BACKEND_URL;
 
 export const dynamic = 'force-dynamic';
 
-const StudiosPage = async () => {
+const StudiosPage = async ({ searchParams }) => {
+    const { category: categoryParam } = await searchParams;
+    const selectedCategory = Array.isArray(categoryParam) ? categoryParam[0] : categoryParam;
     let studios = [];
     if (apiUrl) {
         try {
@@ -19,7 +21,10 @@ const StudiosPage = async () => {
         }
     }
 
-    const hasStudios = Array.isArray(studios) && studios.length > 0;
+    const filteredStudios = Array.isArray(studios) && selectedCategory
+        ? studios.filter((studio) => studio.category?.toLowerCase() === selectedCategory.toLowerCase())
+        : studios;
+    const hasStudios = Array.isArray(filteredStudios) && filteredStudios.length > 0;
 
     return (
         <section>
@@ -29,7 +34,7 @@ const StudiosPage = async () => {
 
                     {hasStudios ? (
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                            {studios.map((studio) => <FeatureCard key={studio._id} studio={studio} variant="studio" />)}
+                            {filteredStudios.map((studio) => <FeatureCard key={studio._id} studio={studio} variant="studio" />)}
                         </div>
                     ) : (
                         <EmptyState
