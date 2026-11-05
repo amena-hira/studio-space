@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   MapPin,
@@ -18,20 +19,22 @@ import AmenityIcon from "@/components/studios/amenity-icon";
 
 const apiUrl = process.env.BCKEND_URL || process.env.BACKEND_URL;
 
+export const dynamic = "force-dynamic";
+
 const StudioDetailsPage = async ({ params }) => {
   const { id } = await params;
   let studio = null;
 
   if (apiUrl) {
     try {
-      const response = await fetch(`${apiUrl}/studios/${id}`);
+      const response = await fetch(`${apiUrl}/studios/${id}`, { cache: "no-store" });
       if (response.ok) studio = await response.json();
     } catch {
       studio = null;
     }
   }
 
-  if (!studio) return null;
+  if (!studio || !studio._id) notFound();
 
   const galleryImages = [
     studio.image,

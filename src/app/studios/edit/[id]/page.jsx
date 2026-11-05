@@ -3,13 +3,22 @@ import StudioForm from "@/components/studios/studio-form";
 
 const apiUrl = process.env.BACKEND_URL;
 
+export const dynamic = "force-dynamic";
+
 const EditStudioPage = async ({ params }) => {
   const { id } = await params;
-  const response = await fetch(`${apiUrl}/studios/${id}`);
+  let studio = null;
 
-  if (!response.ok) notFound();
+  if (apiUrl) {
+    try {
+      const response = await fetch(`${apiUrl}/studios/${id}`, { cache: "no-store" });
+      if (response.ok) studio = await response.json();
+    } catch {
+      studio = null;
+    }
+  }
 
-  const studio = await response.json();
+  if (!studio || !studio._id) notFound();
 
   return (
     <main className="min-h-screen bg-background px-4 py-8 sm:px-8 lg:px-10">

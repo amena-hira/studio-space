@@ -80,6 +80,7 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
     };
 
     try {
+      console.log(`endpoint: ${endpoint}, method: ${method}, payload:${payload}`);
       const response = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
@@ -88,6 +89,7 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
 
       if (!response.ok) {
         const result = await response.json().catch(() => null);
+        console.log(result?.message)
         throw new Error(result?.message || "Unable to save the studio.");
       }
 
@@ -101,8 +103,10 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
       });
       setIsSubmitting(false);
       console.log(`save studio id: ${savedStudio?._id} id: ${studio?._id}`)
-      redirect("/my-listings")
+      router.push("/my-listings");
+      router.refresh();
     } catch (submitError) {
+      console.log(submitError);
       toast.add({
         title: "Unable to save studio",
         description: submitError.message,
@@ -174,7 +178,7 @@ const StudioForm = ({ mode, endpoint, method, studio, user }) => {
 
           {imageUrl && (
             <div className="grid gap-4 rounded-xl border border-border bg-muted/35 p-2 sm:grid-cols-[340px_1fr] sm:items-center">
-              <div className="aspect-[16/7] overflow-hidden rounded-lg bg-muted">
+              <div className="aspect-16/7 overflow-hidden rounded-lg bg-muted">
                 {/* A native image supports direct URLs from ImageBB, Unsplash, and other CDNs. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={imageUrl} alt="Studio preview" className="size-full object-cover" />
