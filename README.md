@@ -9,7 +9,7 @@ StudioSpace is a peer-to-peer marketplace where creators can discover and book p
 ## Examiner Test Credentials
 
 ```text
-Email: alex.rivera@example.com
+Email: alex@gmail.com
 Password: Aa1234
 ```
 ## Website Features
