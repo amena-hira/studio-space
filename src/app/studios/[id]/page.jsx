@@ -105,7 +105,7 @@ const StudioDetailsPage = async ({ params }) => {
                 <div className="flex items-center justify-between gap-3"><span className="flex items-center gap-3 text-muted-foreground"><Users className="size-5 text-primary" />Max Capacity</span><strong>{studio.maxCapacity}</strong></div>
               </div>
               <div className="my-4 border-t border-border" />
-              <BookingModal studio={studio} />
+              <BookingModal studio={studio} apiUrl={apiUrl} />
             </Card>
 
             <Card className="gap-0 rounded-xl border-border bg-card p-5 shadow-sm">
