@@ -2,49 +2,52 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import GoogleLogo from "@/components/auth/google-logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
 import { toast } from "../ui/toast";
 
-const LoginForm = () => {
+const LoginForm = ({ callbackURL = "/" }) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target)
+    setIsSubmitting(true);
+    const formData = new FormData(event.currentTarget)
     const user = Object.fromEntries(formData.entries())
-    console.log(user);
     const { data, error } = await authClient.signIn.email({
       ...user,
+      callbackURL,
     })
 
     if (data) {
-      console.log(data);
       toast.add({
         title: "Login successful!",
         description: "You successfully logged in!",
         type: "success",
       });
-      redirect("/");
+      router.push(callbackURL);
+      router.refresh();
+      return;
     }
     if (error) {
-      console.log(error);
       toast.add({
         title: "Unable to login you",
-        description: submitError.message,
+        description: error.message || "Please check your email and password.",
         type: "error",
       });
     }
+    setIsSubmitting(false);
   }
 
   const handleGoogle = async () => {
-    console.log("google click");
-    const data = await authClient.signIn.social({ provider: 'google' });
+    await authClient.signIn.social({ provider: 'google', callbackURL });
   }
 
   return (
@@ -74,7 +77,9 @@ const LoginForm = () => {
 
         <Link href="#" className="-mt-2 justify-self-end font-semibold text-primary hover:underline">Forgot Password?</Link>
 
-        <Button type="submit" className="h-12 w-full text-base font-bold">Login</Button>
+        <Button type="submit" className="h-12 w-full text-base font-bold" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </Button>
 
         <div className="flex items-center gap-4 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
           Or login with

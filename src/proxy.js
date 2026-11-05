@@ -8,9 +8,14 @@ export async function proxy(request) {
     })
     const user = session?.user
     if (!user) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set(
+            'callbackURL',
+            `${request.nextUrl.pathname}${request.nextUrl.search}`
+        )
+        return NextResponse.redirect(loginUrl)
     }
-    // return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.next()
 }
 
 export const config = {
