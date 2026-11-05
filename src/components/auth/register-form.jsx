@@ -22,9 +22,15 @@ const RegisterForm = () => {
     { label: "Must contain a lowercase letter (a–z)", met: /[a-z]/.test(password) },
     { label: "Must be at least 6 characters long", met: password.length >= 6 },
   ];
+  const meetsPasswordRequirements = requirements.every((requirement) => requirement.met);
 
   const handleRegister = async (event) => {
     event.preventDefault();
+    if (!meetsPasswordRequirements) {
+      toast.error("Password does not meet all requirements");
+      return;
+    }
+
     setIsSubmitting(true);
     const formData = new FormData(event.currentTarget)
     const user = Object.fromEntries(formData.entries())
@@ -43,8 +49,7 @@ const RegisterForm = () => {
       toast.success("Registration successful!", {
         description: "Your information is saved!",
       });
-      router.push("/");
-      router.refresh();
+      router.push("/login");
       return;
     }
     if (error) {
@@ -90,6 +95,7 @@ const RegisterForm = () => {
               className="h-12 pr-11 pl-11"
               placeholder="Enter your password"
               autoComplete="new-password"
+              minLength={6}
               required
             />
             <button type="button" onClick={() => setShowPassword((visible) => !visible)} className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPassword ? "Hide password" : "Show password"}>
@@ -109,7 +115,7 @@ const RegisterForm = () => {
           ))}
         </ul>
 
-        <Button type="submit" className="mt-2 h-12 w-full text-base font-bold" disabled={isSubmitting}>
+        <Button type="submit" className="mt-2 h-12 w-full text-base font-bold" disabled={isSubmitting || !meetsPasswordRequirements}>
           {isSubmitting ? "Creating account..." : "Register"}
         </Button>
 
