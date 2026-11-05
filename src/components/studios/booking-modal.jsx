@@ -52,6 +52,8 @@ const BookingModal = ({ studio, apiUrl }) => {
       studioId: studio?._id,
       studioTitle: studio?.title,
       studioImage: studio?.image,
+      studioCategory: studio?.category,
+      studioLocation: studio?.location,
       username: "Alex Rivera",
       userEmail: "alex.rivera@example.com",
       bookingDate,
@@ -65,7 +67,7 @@ const BookingModal = ({ studio, apiUrl }) => {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/booking`, {
+      const res = await fetch(`${apiUrl}/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
